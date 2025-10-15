@@ -23,9 +23,10 @@ export default function HeroSection() {
               </span>
             </h1>
             <p className="max-w-xl text-lg text-slate-600">
-              SahayakAI continuously tracks your revenue, expenses, cash flow,
-              and compliance milestones to surface risks early and hand you a
-              precise, actionable playbook tailored for India.
+              SahayakAI converts everyday ledgers into an investor-grade Trust
+              Score. We watch revenue, expenses, cash flow, and compliance to
+              surface risks early and hand you a precise, actionable playbook
+              tailored for India.
             </p>
           </div>
 
@@ -165,9 +166,11 @@ export default function HeroSection() {
             <div className="flex items-center justify-between text-sm text-slate-600">
               <div className="flex items-center gap-2">
                 <Image src="/globe.svg" alt="Globe" width={24} height={24} />
-                <p>Connected bank accounts</p>
+                <p>Trust Score trend (90 day)</p>
               </div>
-              <p className="font-semibold text-emerald-700">4 of 4 synced</p>
+              <p className="font-semibold text-emerald-700">
+                +8 pts this month
+              </p>
             </div>
           </div>
         </div>

@@ -1,31 +1,43 @@
 "use client";
 
-import { BellRing, LineChart, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  Bot,
+  CalendarCheck,
+  Gauge,
+  Handshake,
+  ReceiptText,
+} from "lucide-react";
 
 const features = [
   {
-    title: "Predictive risk score",
+    title: "Predictive health dashboard",
     description:
-      "Spot cash dips and revenue slowdowns up to 30 days in advance with clear severity levels.",
-    icon: LineChart,
+      "Live Business Health Score with scenario modelling and early warnings for cash, sales, and margins.",
+    icon: Gauge,
   },
   {
-    title: "AI business advisor",
+    title: "AI business coach",
     description:
-      "Ask questions any time and get answers tuned to Indian MSME policies, schemes, and realities.",
-    icon: Sparkles,
+      "Ask anything and receive playbooks grounded in Indian market data, policies, and subsidies.",
+    icon: Bot,
   },
   {
-    title: "Interactive trend analysis",
+    title: "Smart receivables manager",
     description:
-      "Visualise revenue, expenses, and profit trends in a single view that your team can act on immediately.",
-    icon: BellRing,
+      "Forecast delayed collections, prioritise invoices, and auto-draft professional reminders.",
+    icon: ReceiptText,
   },
   {
-    title: "Personalised alerts",
+    title: "Compliance co-pilot",
     description:
-      "Receive nudges on WhatsApp and email before small issues become big problems that impact cash flow.",
-    icon: ShieldCheck,
+      "Personalised statutory calendar for GST, PF, ESI, and more, complete with proactive nudges.",
+    icon: CalendarCheck,
+  },
+  {
+    title: "Investor connect & Trust Score",
+    description:
+      "Share a verified Trust Score narrative with investors and lenders—your new digital collateral.",
+    icon: Handshake,
   },
 ];
 
@@ -46,7 +58,7 @@ export default function Features() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {features.map((feature) => (
             <div
               key={feature.title}

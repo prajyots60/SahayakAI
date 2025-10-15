@@ -15,11 +15,12 @@ export default function CTASection() {
             Final call
           </p>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-            Ready to secure your business’s future?
+            Let your Trust Score open doors before risks close them.
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-emerald-50/90">
-            Start with a free health score today. Within minutes you’ll know
-            where the risks are and the exact actions to take.
+            Activate SahayakAI and ship your first investor-ready update in
+            under an hour—complete with the actions that keep your business
+            steady.
           </p>
         </div>
 

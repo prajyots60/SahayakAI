@@ -1,25 +1,25 @@
 "use client";
 
-import { BrainCircuit, FileSpreadsheet, Lightbulb } from "lucide-react";
+import { Activity, NotebookPen, UploadCloud } from "lucide-react";
 
 const steps = [
   {
-    title: "Input your numbers",
+    title: "Connect your reality",
     description:
-      "Enter monthly revenue, expenses, and cash on hand or upload a CSV from your accounting tool.",
-    icon: FileSpreadsheet,
+      "Sync GST, banking, and receivables data or drop in your monthly tracker. We clean and map it for you.",
+    icon: UploadCloud,
   },
   {
-    title: "Let the AI run diagnostics",
+    title: "Predict what’s next",
     description:
-      "SahayakAI benchmarks your metrics against industry peers and learns from your historical performance.",
-    icon: BrainCircuit,
+      "Our AI models simulate cash runway, margin pressure, and compliance gaps with alerts 30 days in advance.",
+    icon: Activity,
   },
   {
-    title: "Get a forward-looking plan",
+    title: "Act with confidence",
     description:
-      "Receive a risk score, projected issues, and a checklist of actions tailored to Indian MSME realities.",
-    icon: Lightbulb,
+      "Get a Trust Score summary, priority actions, and ready-to-send updates for teams, advisors, and investors.",
+    icon: NotebookPen,
   },
 ];
 
@@ -27,7 +27,7 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="bg-gradient-to-b from-[#e6f2ea] via-white to-[#f3f7f3] py-20 sm:py-24"
+      className="bg-gradient-to-b from-[#e3f4ea] via-white to-[#f2faf4] py-20 sm:py-24"
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
