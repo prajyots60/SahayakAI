@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -25,35 +25,67 @@ export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
+  // Keep widths in one place
+  const EXPANDED_WIDTH = 240; // px (w-60)
+  const COLLAPSED_WIDTH = 72; // px (w-[72px])
+
   const asideClassName = [
-    "hidden xl:flex flex-none sticky top-8 self-start transition-all duration-300",
-    collapsed ? "w-[84px]" : "w-72",
+    // Fixed, full-height sidebar on xl+ screens
+    "hidden xl:flex fixed inset-y-0 left-0 z-40 transition-all duration-300",
+    // Slim widths
+    collapsed ? "w-[72px]" : "w-60",
     className,
   ]
     .filter(Boolean)
     .join(" ");
+
+  // Offset page content so it doesn't sit underneath the fixed sidebar (xl and up)
+  useEffect(() => {
+    const applyOffset = () => {
+      const xl = window.matchMedia("(min-width: 1280px)").matches; // Tailwind's xl breakpoint
+      const width = collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH;
+      if (xl) {
+        document.documentElement.style.setProperty(
+          "--sidebar-width",
+          `${width}px`
+        );
+        document.body.style.paddingLeft = `${width}px`;
+      } else {
+        document.documentElement.style.setProperty("--sidebar-width", "0px");
+        document.body.style.paddingLeft = "";
+      }
+    };
+
+    applyOffset();
+    window.addEventListener("resize", applyOffset);
+    return () => {
+      window.removeEventListener("resize", applyOffset);
+      document.documentElement.style.removeProperty("--sidebar-width");
+      document.body.style.paddingLeft = "";
+    };
+  }, [collapsed]);
 
   return (
     <aside className={asideClassName}>
       <Paper
         withBorder
         shadow="xl"
-        radius={collapsed ? 28 : 32}
-        p={collapsed ? "md" : "lg"}
+        radius={24}
+        p={collapsed ? "sm" : "md"}
         style={{
           background: "rgba(255, 255, 255, 0.94)",
           borderColor: "rgba(16, 185, 129, 0.25)",
           boxShadow: "0 24px 40px -24px rgba(13, 148, 136, 0.45)",
           backdropFilter: "blur(12px)",
-          height: "calc(100vh - 5rem)",
-          maxHeight: "calc(100vh - 5rem)",
+          height: "100vh",
+          maxHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           alignItems: collapsed ? "center" : undefined,
         }}
         className="w-full"
       >
-        <Stack gap={collapsed ? "md" : "lg"} className="h-full">
+        <Stack gap={collapsed ? "sm" : "md"} className="h-full">
           <Group
             justify={collapsed ? "center" : "space-between"}
             align="center"
@@ -65,13 +97,13 @@ export function Sidebar({ className }: { className?: string }) {
                   background: "linear-gradient(135deg, #10b981, #0f766e)",
                   color: "white",
                   fontWeight: 700,
-                  width: collapsed ? 40 : 44,
-                  height: collapsed ? 40 : 44,
-                  borderRadius: 18,
+                  width: collapsed ? 36 : 40,
+                  height: collapsed ? 36 : 40,
+                  borderRadius: 16,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 16,
+                  fontSize: 14,
                   letterSpacing: "0.08em",
                 }}
               >
@@ -110,29 +142,24 @@ export function Sidebar({ className }: { className?: string }) {
                   variant="light"
                   color="teal"
                   radius="xl"
-                  size="lg"
+                  size="md"
                   onClick={() => setCollapsed((prev) => !prev)}
                   aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 >
                   {collapsed ? (
-                    <ChevronsRight size={18} strokeWidth={1.8} />
+                    <ChevronsRight size={16} strokeWidth={1.6} />
                   ) : (
-                    <ChevronsLeft size={18} strokeWidth={1.8} />
+                    <ChevronsLeft size={16} strokeWidth={1.6} />
                   )}
                 </ActionIcon>
               </Tooltip>
             </Group>
           </Group>
 
-          <ScrollArea
-            style={{ flex: 1 }}
-            offsetScrollbars
-            type="hover"
-            w="100%"
-          >
+          <ScrollArea style={{ flex: 1 }} type="auto" w="100%">
             <Stack
-              gap={collapsed ? "lg" : "xl"}
-              pb={collapsed ? "md" : "lg"}
+              gap={collapsed ? "sm" : "md"}
+              pb={collapsed ? "sm" : "md"}
               align={collapsed ? "center" : undefined}
             >
               {dashboardNavSections.map((section) => (
@@ -169,7 +196,7 @@ export function Sidebar({ className }: { className?: string }) {
                             <ActionIcon
                               component={Link}
                               href={item.href}
-                              size="xl"
+                              size="lg"
                               radius="xl"
                               variant={isActive ? "filled" : "light"}
                               color="teal"
@@ -180,7 +207,7 @@ export function Sidebar({ className }: { className?: string }) {
                               }}
                               aria-label={item.label}
                             >
-                              <Icon size={18} strokeWidth={1.7} />
+                              <Icon size={16} strokeWidth={1.6} />
                             </ActionIcon>
                           </Tooltip>
                         );
@@ -192,16 +219,17 @@ export function Sidebar({ className }: { className?: string }) {
                           component={Link}
                           href={item.href}
                           label={item.label}
-                          description={item.description}
+                          // Hide description to enforce uniform row heights
+                          description={undefined}
                           active={isActive}
                           leftSection={
                             <ThemeIcon
                               radius="xl"
-                              size={36}
+                              size={30}
                               variant={isActive ? "filled" : "light"}
                               color="teal"
                             >
-                              <Icon size={16} strokeWidth={1.7} />
+                              <Icon size={14} strokeWidth={1.6} />
                             </ThemeIcon>
                           }
                           rightSection={
@@ -213,19 +241,22 @@ export function Sidebar({ className }: { className?: string }) {
                                 size="xs"
                                 tt="uppercase"
                                 fw={600}
+                                style={{ minWidth: 34, textAlign: "center" }}
                               >
                                 {item.status}
                               </Badge>
                             ) : undefined
                           }
-                          className={`rounded-3xl border px-3 py-3 transition-all ${
+                          className={`rounded-xl border px-2 transition-all ${
                             isActive
                               ? "border-teal-300 bg-emerald-50 shadow-lg"
                               : "border-transparent hover:border-teal-200/70 hover:bg-emerald-50/60 hover:shadow"
                           }`}
                           classNames={{
-                            label: "text-sm font-semibold text-slate-900",
-                            description: "text-xs text-slate-500",
+                            root: "h-11 items-center",
+                            label:
+                              "text-[13px] font-semibold text-slate-900 truncate",
+                            description: "hidden",
                           }}
                         />
                       );

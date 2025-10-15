@@ -64,7 +64,7 @@ export const dashboardNavSections: DashboardNavSection[] = [
       },
       {
         label: "Compliance",
-        href: "/dashboard#compliance",
+        href: "/compliance",
         icon: CalendarCheck2,
         description: "Deadlines & filings",
       },
