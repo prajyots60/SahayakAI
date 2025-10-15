@@ -3,6 +3,7 @@ import {
   CalendarCheck2,
   LayoutDashboard,
   LineChart,
+  MapPinned,
   ShieldCheck,
   Sparkles,
   UploadCloud,
@@ -72,6 +73,13 @@ export const dashboardNavSections: DashboardNavSection[] = [
   {
     title: "Growth",
     items: [
+      {
+        label: "Market Expansion",
+        href: "/opportunities",
+        icon: MapPinned,
+        description: "Find your next city",
+        status: "new",
+      },
       {
         label: "Investor Connect",
         href: "/dashboard#investor-connect",
