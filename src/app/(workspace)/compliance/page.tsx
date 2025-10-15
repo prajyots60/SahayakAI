@@ -198,11 +198,13 @@ const COMPLIANCE_DOCUMENTS = [
   },
 ];
 
-const STATUS_STYLES: Record<ComplianceStatus, { label: string; className: string }> = {
+const STATUS_STYLES: Record<
+  ComplianceStatus,
+  { label: string; className: string }
+> = {
   completed: {
     label: "Completed",
-    className:
-      "bg-emerald-50 text-emerald-600 border border-emerald-200/70",
+    className: "bg-emerald-50 text-emerald-600 border border-emerald-200/70",
   },
   "due-soon": {
     label: "Due Soon",
@@ -246,11 +248,16 @@ export default function CompliancePage() {
     }
 
     if (days === 0) {
-      return { countdownLabel: "DUE TODAY", countdownTone: "critical" } as const;
+      return {
+        countdownLabel: "DUE TODAY",
+        countdownTone: "critical",
+      } as const;
     }
 
     return {
-      countdownLabel: `OVERDUE BY ${Math.abs(days)} DAY${Math.abs(days) === 1 ? "" : "S"}`,
+      countdownLabel: `OVERDUE BY ${Math.abs(days)} DAY${
+        Math.abs(days) === 1 ? "" : "S"
+      }`,
       countdownTone: "critical",
     } as const;
   }, []);
@@ -286,10 +293,15 @@ export default function CompliancePage() {
               Stay ahead of every filing, automatically
             </h1>
             <p className="max-w-2xl text-sm text-slate-500">
-              Track deadlines, prepare documents, and store your compliance records in one intelligent, proactive workspace.
+              Track deadlines, prepare documents, and store your compliance
+              records in one intelligent, proactive workspace.
             </p>
           </div>
-          <Button asChild variant="outline" className="rounded-full border-slate-200 px-5 font-semibold text-slate-600">
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-slate-200 px-5 font-semibold text-slate-600"
+          >
             <Link href="/advisor?topic=compliance">
               <Sparkles className="mr-2 h-4 w-4" /> Ask SahayakAI for advice
             </Link>
@@ -299,12 +311,21 @@ export default function CompliancePage() {
 
       {/* Scorecard */}
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <Card className={cn("border border-emerald-100/70 shadow-lg shadow-emerald-500/10", complianceMessage.tone === "warning" && "border-amber-200/70 shadow-amber-500/10", complianceMessage.tone === "critical" && "border-rose-200/70 shadow-rose-500/10")}
+        <Card
+          className={cn(
+            "border border-emerald-100/70 shadow-lg shadow-emerald-500/10",
+            complianceMessage.tone === "warning" &&
+              "border-amber-200/70 shadow-amber-500/10",
+            complianceMessage.tone === "critical" &&
+              "border-rose-200/70 shadow-rose-500/10"
+          )}
         >
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-lg">Compliance Health Score</CardTitle>
-              <CardDescription>Your compliance snapshot for this quarter</CardDescription>
+              <CardDescription>
+                Your compliance snapshot for this quarter
+              </CardDescription>
             </div>
             <GaugeCircle className="h-8 w-8 text-emerald-400" />
           </CardHeader>
@@ -313,11 +334,15 @@ export default function CompliancePage() {
               <div
                 className="relative flex h-36 w-36 items-center justify-center rounded-full"
                 style={{
-                  background: `conic-gradient(${healthScore >= 90
-                    ? "#10b981"
-                    : healthScore >= 70
-                    ? "#f59e0b"
-                    : "#f97316"} ${(healthScore / 100) * 360}deg, #e2e8f0 ${(healthScore / 100) * 360}deg)`,
+                  background: `conic-gradient(${
+                    healthScore >= 90
+                      ? "#10b981"
+                      : healthScore >= 70
+                      ? "#f59e0b"
+                      : "#f97316"
+                  } ${(healthScore / 100) * 360}deg, #e2e8f0 ${
+                    (healthScore / 100) * 360
+                  }deg)`,
                 }}
               >
                 <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white text-slate-900 shadow-inner">
@@ -332,12 +357,13 @@ export default function CompliancePage() {
                   <ShieldCheck className="h-4 w-4 text-emerald-500" />
                   Score computed from 12 statutory obligations this quarter
                 </div>
-                <p className={cn(
-                  "text-sm font-medium",
-                  complianceMessage.tone === "positive" && "text-emerald-600",
-                  complianceMessage.tone === "warning" && "text-amber-600",
-                  complianceMessage.tone === "critical" && "text-rose-600",
-                )}
+                <p
+                  className={cn(
+                    "text-sm font-medium",
+                    complianceMessage.tone === "positive" && "text-emerald-600",
+                    complianceMessage.tone === "warning" && "text-amber-600",
+                    complianceMessage.tone === "critical" && "text-rose-600"
+                  )}
                 >
                   {complianceMessage.message}
                 </p>
@@ -357,18 +383,24 @@ export default function CompliancePage() {
         <Card className="border border-slate-200/80 bg-gradient-to-br from-white via-white to-slate-50 shadow-lg">
           <CardHeader className="flex flex-row items-start justify-between">
             <div>
-              <CardTitle className="text-lg">Next Deadline Approaching</CardTitle>
-              <CardDescription>Stay ahead of the most urgent task</CardDescription>
+              <CardTitle className="text-lg">
+                Next Deadline Approaching
+              </CardTitle>
+              <CardDescription>
+                Stay ahead of the most urgent task
+              </CardDescription>
             </div>
             <CalendarDays className="h-8 w-8 text-slate-300" />
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
-            <div className={cn(
-              "flex items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold uppercase tracking-[0.3em]",
-              countdownTone === "warning" && "bg-amber-50 text-amber-600",
-              countdownTone === "critical" && "bg-rose-50 text-rose-600",
-              countdownTone === "default" && "bg-slate-100 text-slate-600"
-            )}>
+            <div
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-4 py-2 text-sm font-semibold uppercase tracking-[0.3em]",
+                countdownTone === "warning" && "bg-amber-50 text-amber-600",
+                countdownTone === "critical" && "bg-rose-50 text-rose-600",
+                countdownTone === "default" && "bg-slate-100 text-slate-600"
+              )}
+            >
               <Clock4 className="h-4 w-4" />
               {countdownLabel}
             </div>
@@ -376,7 +408,9 @@ export default function CompliancePage() {
               <h3 className="text-lg font-semibold text-slate-900">
                 {NEXT_DEADLINE.name}
               </h3>
-              <p className="text-sm text-slate-500">Due on {NEXT_DEADLINE.dueDate}</p>
+              <p className="text-sm text-slate-500">
+                Due on {NEXT_DEADLINE.dueDate}
+              </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button
@@ -400,9 +434,12 @@ export default function CompliancePage() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Interactive Compliance Timeline</h2>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Interactive Compliance Timeline
+            </h2>
             <p className="text-sm text-slate-500">
-              Review every statutory obligation with real-time status and instant preparation guidance.
+              Review every statutory obligation with real-time status and
+              instant preparation guidance.
             </p>
           </div>
           <Badge className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
@@ -410,25 +447,35 @@ export default function CompliancePage() {
           </Badge>
         </div>
 
-        <div className="relative space-y-10 border-l border-dashed border-slate-200 pl-8">
-          <span className="absolute left-0 top-0 h-2 w-2 -translate-x-[5px] rounded-full bg-emerald-500" />
+        <div className="relative space-y-12 pl-12">
+          <div className="absolute left-6 top-0 h-full w-px bg-slate-200" />
           {TIMELINE.map((section) => (
-            <div key={section.month} className="relative flex flex-col gap-4">
-              <div className="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-500 shadow" />
+            <div key={section.month} className="relative pl-8">
+              <div className="absolute left-6 top-2 flex -translate-x-1/2">
+                <span className="h-3 w-3 rounded-full border-2 border-white bg-emerald-500 shadow" />
+              </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
                   {section.month}
                 </h3>
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
                 {section.tasks.map((task) => {
                   const status = STATUS_STYLES[task.status];
                   return (
-                    <Card key={task.id} className="border border-slate-200/80 bg-white/95 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+                    <Card
+                      key={task.id}
+                      className="border border-slate-200/80 bg-white/95 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                    >
                       <CardHeader className="flex flex-row items-start justify-between gap-2">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <Badge className={cn("rounded-full px-3 py-1 text-[11px] font-semibold", status.className)}>
+                            <Badge
+                              className={cn(
+                                "rounded-full px-3 py-1 text-[11px] font-semibold",
+                                status.className
+                              )}
+                            >
                               {status.label}
                             </Badge>
                             <span className="text-xs uppercase tracking-[0.3em] text-slate-400">
@@ -446,11 +493,15 @@ export default function CompliancePage() {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="rounded-lg border border-slate-200/60 bg-slate-50/60 px-3 py-2 text-xs text-slate-500">
-                          <span className="font-semibold text-slate-700">Last completed on:</span>{" "}
+                          <span className="font-semibold text-slate-700">
+                            Last completed on:
+                          </span>{" "}
                           {task.lastCompletedOn ?? "-"}
                         </div>
                         <div className="space-y-2 text-sm text-slate-600">
-                          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Preparation checklist</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                            Preparation checklist
+                          </p>
                           <ul className="space-y-1 text-xs">
                             {task.checklist.map((item) => (
                               <li key={item} className="flex items-start gap-2">
@@ -490,9 +541,12 @@ export default function CompliancePage() {
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Your Secure Document Vault</h2>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Your Secure Document Vault
+            </h2>
             <p className="text-sm text-slate-500">
-              Store certificates, licences, and proof of compliance for instant access during audits.
+              Store certificates, licences, and proof of compliance for instant
+              access during audits.
             </p>
           </div>
           <Button className="rounded-full bg-slate-900 px-4 text-sm font-semibold text-white shadow-md shadow-slate-900/10">
@@ -518,14 +572,26 @@ export default function CompliancePage() {
                       {doc.name}
                     </div>
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-slate-500">{doc.uploadedOn}</TableCell>
-                  <TableCell className="px-6 py-4 text-slate-500">{doc.expiresOn}</TableCell>
+                  <TableCell className="px-6 py-4 text-slate-500">
+                    {doc.uploadedOn}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-slate-500">
+                    {doc.expiresOn}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" className="rounded-full border-slate-200 px-3 text-xs font-semibold text-slate-600">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full border-slate-200 px-3 text-xs font-semibold text-slate-600"
+                      >
                         Download
                       </Button>
-                      <Button variant="ghost" size="sm" className="rounded-full px-3 text-xs font-semibold text-rose-500 hover:bg-rose-50">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-full px-3 text-xs font-semibold text-rose-500 hover:bg-rose-50"
+                      >
                         Delete
                       </Button>
                     </div>
@@ -547,7 +613,8 @@ export default function CompliancePage() {
                   Let’s create your personalized compliance calendar
                 </DialogTitle>
                 <DialogDescription className="text-sm text-slate-500">
-                  Answer four quick questions so SahayakAI can tailor the compliance workflow to your business type.
+                  Answer four quick questions so SahayakAI can tailor the
+                  compliance workflow to your business type.
                 </DialogDescription>
               </DialogHeader>
 
@@ -627,18 +694,23 @@ export default function CompliancePage() {
                       Are you registered under GST?
                     </p>
                     <p className="text-xs text-slate-500">
-                      This helps us prioritise returns like GSTR-1, 3B, and annual recon.
+                      This helps us prioritise returns like GSTR-1, 3B, and
+                      annual recon.
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={cn(
-                      "text-xs font-semibold uppercase tracking-[0.3em]",
-                      gstRegistered ? "text-emerald-600" : "text-slate-400"
-                    )}
+                    <span
+                      className={cn(
+                        "text-xs font-semibold uppercase tracking-[0.3em]",
+                        gstRegistered ? "text-emerald-600" : "text-slate-400"
+                      )}
                     >
                       {gstRegistered ? "Yes" : "No"}
                     </span>
-                    <Switch checked={gstRegistered} onCheckedChange={setGstRegistered} />
+                    <Switch
+                      checked={gstRegistered}
+                      onCheckedChange={setGstRegistered}
+                    />
                   </div>
                 </div>
               </div>
@@ -661,21 +733,34 @@ export default function CompliancePage() {
                     Automated tracking
                   </Badge>
                   <h3 className="text-2xl font-semibold leading-snug">
-                    SahayakAI keeps a live watch on every statutory obligation your business has.
+                    SahayakAI keeps a live watch on every statutory obligation
+                    your business has.
                   </h3>
                   <p className="text-sm text-emerald-100">
-                    Tailored alerts, intelligent checklists, and document vault—all synced to the regulations that apply to you.
+                    Tailored alerts, intelligent checklists, and document
+                    vault—all synced to the regulations that apply to you.
                   </p>
                 </div>
                 <div className="space-y-3 rounded-3xl border border-white/20 bg-white/5 p-5 text-sm text-emerald-50">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="h-4 w-4" />
-                    <span className="uppercase tracking-[0.3em] text-[11px]">What you’ll get</span>
+                    <span className="uppercase tracking-[0.3em] text-[11px]">
+                      What you’ll get
+                    </span>
                   </div>
                   <ul className="space-y-2 text-sm">
-                    <li className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4 text-emerald-200" /> Tailor-made compliance calendar</li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4 text-emerald-200" /> AI-powered filing preparation assistant</li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="h-4 w-4 text-emerald-200" /> Smart vault with renewal reminders</li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-200" />{" "}
+                      Tailor-made compliance calendar
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-200" />{" "}
+                      AI-powered filing preparation assistant
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-200" />{" "}
+                      Smart vault with renewal reminders
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -685,14 +770,18 @@ export default function CompliancePage() {
       </Dialog>
 
       {/* Prepare Modal */}
-      <Dialog open={Boolean(activeTask)} onOpenChange={(open) => !open && setActiveTask(null)}>
+      <Dialog
+        open={Boolean(activeTask)}
+        onOpenChange={(open) => !open && setActiveTask(null)}
+      >
         <DialogContent className="w-full max-w-xl rounded-3xl border border-emerald-100 bg-white/95 shadow-2xl shadow-emerald-500/10">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-slate-900">
               Preparing for: {activeTask?.name}
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-500">
-              To ensure a smooth filing, gather the following information before you start.
+              To ensure a smooth filing, gather the following information before
+              you start.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -710,15 +799,22 @@ export default function CompliancePage() {
             </ul>
             <div className="rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4 text-sm text-slate-600">
               <strong className="flex items-center gap-2 text-slate-700">
-                <AlertTriangle className="h-4 w-4 text-amber-500" /> SahayakAI Tip
+                <AlertTriangle className="h-4 w-4 text-amber-500" /> SahayakAI
+                Tip
               </strong>
               <p className="mt-2 text-sm text-slate-600">
-                Remember to reconcile your purchase register with your GSTR-2B statement on the portal before finalising your ITC claim to avoid notices.
+                Remember to reconcile your purchase register with your GSTR-2B
+                statement on the portal before finalising your ITC claim to
+                avoid notices.
               </p>
             </div>
           </div>
           <DialogFooter className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <Button asChild variant="link" className="px-0 text-sm font-semibold text-emerald-600">
+            <Button
+              asChild
+              variant="link"
+              className="px-0 text-sm font-semibold text-emerald-600"
+            >
               <Link href="/advisor?topic=gst-filing">
                 Ask SahayakAI more questions about GST
               </Link>

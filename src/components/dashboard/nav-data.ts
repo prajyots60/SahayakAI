@@ -82,7 +82,7 @@ export const dashboardNavSections: DashboardNavSection[] = [
       },
       {
         label: "Investor Connect",
-        href: "/dashboard#investor-connect",
+        href: "/investor-connect",
         icon: Sparkles,
         status: "beta",
       },
