@@ -178,7 +178,7 @@ export default function SignupPage() {
                 <input
                   id="name"
                   type="text"
-                  placeholder="Priya Sharma"
+                  placeholder="Prajyot Sharma"
                   className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>

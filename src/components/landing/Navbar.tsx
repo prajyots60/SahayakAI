@@ -45,7 +45,7 @@ export default function Navbar() {
               SahayakAI
             </span>
             <span className="-mt-1 text-base font-semibold text-slate-900">
-              Financial Co-Pilot
+              Business Co-Pilot
             </span>
           </div>
         </Link>

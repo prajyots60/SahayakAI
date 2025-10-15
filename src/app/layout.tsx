@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,11 +25,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-mantine-color-scheme="light">
+      <head>
+        <ColorSchemeScript defaultColorScheme="light" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <MantineProvider
+          defaultColorScheme="light"
+          theme={{
+            primaryColor: "teal",
+            fontFamily: "var(--font-geist-sans)",
+            headings: { fontFamily: "var(--font-geist-sans)" },
+            defaultRadius: "lg",
+          }}
+        >
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );

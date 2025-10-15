@@ -4,7 +4,7 @@ import { Quote } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Priya Sharma",
+    name: "Prajyot Sharma",
     role: "Owner, Sharma Textiles",
     location: "Jaipur, Rajasthan",
     quote:

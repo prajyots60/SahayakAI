@@ -74,7 +74,7 @@ export default function AdvisorPage() {
   const showWelcome = messages.length === 0 && !isThinking;
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+    <div className="flex flex-col gap-6 xl:flex-row">
       <aside className="hidden w-full max-w-xs border-r border-emerald-100/70 bg-white/70 px-6 py-10 text-slate-700 lg:flex lg:flex-col">
         <div className="mb-6 flex items-center gap-3">
           <History className="h-5 w-5 text-emerald-500" />
@@ -107,29 +107,32 @@ export default function AdvisorPage() {
         </div>
       </aside>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 lg:px-12">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-              AI advisor
-            </p>
-            <h1 className="text-3xl font-semibold text-slate-900">
-              Ask anything, Priya.
-            </h1>
-            <p className="text-sm text-slate-500">
-              Your always-on business partner for cash flow, growth, and risk
-              mitigation. Start with one of the focus areas highlighted on your
-              dashboard.
-            </p>
-          </div>
-          <Button variant="ghost" asChild>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center text-sm font-medium text-emerald-700 hover:text-emerald-800"
+      <div className="flex flex-1 flex-col gap-6">
+        <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-6 shadow-xl shadow-emerald-500/10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
+                AI advisor
+              </p>
+              <h1 className="text-3xl font-semibold text-slate-900">
+                Ask anything, Prajyot.
+              </h1>
+              <p className="text-sm text-slate-500">
+                Your always-on business partner for cash flow, growth, and risk
+                mitigation. Start with one of the focus areas highlighted on
+                your dashboard.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              asChild
+              className="self-start text-sm font-medium text-emerald-700 hover:text-emerald-800"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to dashboard
-            </Link>
-          </Button>
+              <Link href="/dashboard" className="inline-flex items-center">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to dashboard
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <section className="flex flex-1 flex-col gap-6 rounded-3xl border border-emerald-100 bg-white/95 p-6 shadow-xl shadow-emerald-500/10">
@@ -195,7 +198,7 @@ export default function AdvisorPage() {
             </div>
           </form>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

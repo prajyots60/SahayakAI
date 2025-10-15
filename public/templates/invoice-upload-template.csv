@@ -1,0 +1,6 @@
+Customer Name,Invoice Number,Amount (INR),Issue Date (YYYY-MM-DD),Due Date (YYYY-MM-DD),Industry,Average Payment Delay (Days)
+Aarav Retail LLP,INV-1042,480000,2025-08-28,2025-09-30,Retail,12
+Namma Grocers,INV-1036,310000,2025-09-15,2025-10-02,Wholesale,7
+Orbit Engineers,INV-1031,260000,2025-09-25,2025-10-12,Manufacturing,4
+Sagar Hospitality,INV-1024,175000,2025-09-10,2025-09-25,Hospitality,15
+BrightSpark Media,INV-1019,98000,2025-09-18,2025-10-05,Services,9
