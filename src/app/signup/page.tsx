@@ -1,15 +1,52 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, Sparkles, Users, Building } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { ArrowLeft, Sparkles, Users } from "lucide-react";
+import type { UserRole } from "@prisma/client";
 
-const industries = [
-  "Manufacturing",
-  "Retail & Ecommerce",
-  "Services",
-  "Hospitality",
-  "Agriculture",
-  "Other",
-];
+// Signup schema (client-side) aligned with backend
+const signupSchema = z
+  .object({
+    fullName: z.string().min(2, "Please enter your full name"),
+    email: z.string().email("Enter a valid email"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
+        message: "Use letters and numbers",
+      }),
+    role: z.enum(["MSME_OWNER", "INVESTOR"]),
+    businessName: z
+      .string()
+      .trim()
+      .min(2, "Enter your business name")
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "MSME_OWNER" && !data.businessName?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["businessName"],
+        message: "Business name is required for MSME owners",
+      });
+    }
+  });
 
 const benefits = [
   "Launch with a personalised business health score",
@@ -51,7 +88,54 @@ function GoogleIcon() {
   );
 }
 
+type SignupValues = z.infer<typeof signupSchema>;
+
 export default function SignupPage() {
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const form = useForm<SignupValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      role: "MSME_OWNER",
+      businessName: "",
+    },
+  });
+
+  const watchRole = form.watch("role");
+
+  async function onSubmit(values: SignupValues) {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        if (data?.errors) {
+          data.errors.forEach((e: any) => {
+            if (e.path) form.setError(e.path as any, { message: e.message });
+          });
+        }
+        return;
+      }
+
+      // Account created; direct them to onboarding to complete setup.
+      router.push(`/onboarding?userId=${data.user.id}&role=${data.user.role}`);
+    } catch (err) {
+      console.error("signup submit error", err);
+      form.setError("root", {
+        message: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4 py-10">
       <div className="grid w-full max-w-6xl overflow-hidden rounded-3xl border border-emerald-100 bg-white/95 shadow-2xl shadow-emerald-500/10 lg:grid-cols-2">
@@ -152,114 +236,146 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <form className="grid gap-4">
-              <div className="grid gap-2">
-                <label
-                  className="text-sm font-medium text-slate-700"
-                  htmlFor="business"
-                >
-                  Business name
-                </label>
-                <input
-                  id="business"
-                  type="text"
-                  placeholder="Sharma Textiles"
-                  className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            <Form {...form}>
+              <form
+                className="grid gap-4"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700">
+                        Account type
+                      </FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                        >
+                          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-emerald-50">
+                            <RadioGroupItem value="MSME_OWNER" />I am an MSME
+                            Owner
+                          </label>
+                          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-emerald-50">
+                            <RadioGroupItem value="INVESTOR" />I am an Investor
+                          </label>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="grid gap-2">
-                <label
-                  className="text-sm font-medium text-slate-700"
-                  htmlFor="name"
-                >
-                  Your name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="Prajyot Sharma"
-                  className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                {watchRole === "MSME_OWNER" && (
+                  <FormField
+                    control={form.control}
+                    name="businessName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-slate-700">
+                          Business name
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Sharma Textiles" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700">
+                        Your name
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Prajyot Sharma" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="grid gap-2">
-                <label
-                  className="text-sm font-medium text-slate-700"
-                  htmlFor="industry"
-                >
-                  Industry
-                </label>
-                <div className="relative">
-                  <select
-                    id="industry"
-                    className="w-full appearance-none rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    defaultValue=""
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700">
+                        Work email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="you@business.in"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700">
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Create a strong password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <span>By continuing you agree to our</span>
+                  <Link
+                    href="/terms"
+                    className="font-semibold text-emerald-600 hover:underline"
                   >
-                    <option value="" disabled>
-                      Select your industry
-                    </option>
-                    {industries.map((industry) => (
-                      <option key={industry} value={industry}>
-                        {industry}
-                      </option>
-                    ))}
-                  </select>
-                  <Building className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-400" />
+                    Terms
+                  </Link>
+                  <span>&</span>
+                  <Link
+                    href="/privacy"
+                    className="font-semibold text-emerald-600 hover:underline"
+                  >
+                    Privacy Policy
+                  </Link>
                 </div>
-              </div>
 
-              <div className="grid gap-2">
-                <label
-                  className="text-sm font-medium text-slate-700"
-                  htmlFor="email"
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="mt-2 w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 py-6 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30 disabled:opacity-70"
                 >
-                  Work email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="you@business.in"
-                  className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <label
-                  className="text-sm font-medium text-slate-700"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="Create a strong password"
-                  className="w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                <span>By continuing you agree to our</span>
-                <Link
-                  href="/terms"
-                  className="font-semibold text-emerald-600 hover:underline"
-                >
-                  Terms
-                </Link>
-                <span>&</span>
-                <Link
-                  href="/privacy"
-                  className="font-semibold text-emerald-600 hover:underline"
-                >
-                  Privacy Policy
-                </Link>
-              </div>
-
-              <Button className="mt-2 w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 py-6 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-                Create account & start trial
-              </Button>
-            </form>
+                  {submitting
+                    ? "Creating account..."
+                    : "Create account & start trial"}
+                </Button>
+                {form.formState.errors.root && (
+                  <p className="text-sm text-red-600">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
+              </form>
+            </Form>
           </div>
 
           <div className="flex items-center justify-between text-sm text-slate-500">

@@ -1,0 +1,212 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ## 1. User & Business Models ##
+
+// Stores user login and role (MSME Owner or Investor)
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  fullName      String?
+  role          UserRole  @default(MSME_OWNER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  onboardingCompleted Boolean   @default(false)
+
+  // 1-to-1 relationship: One user has one business profile
+  businessProfile BusinessProfile?
+
+  // 1-to-many relationship: One investor can show interest in many businesses
+  sentInterests InvestorInterest[] @relation("Investor")
+
+  @@map("users") 
+}
+
+// The central "hub" table for an MSME's static data and current scores
+model BusinessProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique // Foreign key
+  businessName    String
+  industry        String?
+  location        String?
+  entityType      String?  // e.g., 'Proprietorship', 'Pvt Ltd'
+  annualTurnoverRange String?
+  employeeCountRange  String?
+
+  // Current scores from Module 1 (updated by your backend)
+  currentHealthScore      Decimal?
+  currentTrustScore       Decimal?
+  fundingReadinessScore Decimal?
+
+  // Investor Connect Showcase Fields
+  isDiscoverable    Boolean  @default(false)
+  fundingAskRange   String?  // e.g., '10L-25L'
+  fundingPitch      String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // --- Relationships ---
+  // 1-to-1 relationship back to the User
+  user User @relation(fields: [userId], references: [id])
+
+  // 1-to-many relationships: One business has many...
+  financialData   FinancialData[]
+  invoices        Invoice[]
+  complianceTasks ComplianceTask[]
+  chatSessions    ChatSession[]
+
+  // 1-to-many relationship: One business can receive many interest requests
+  receivedInterests InvestorInterest[] @relation("MSME")
+
+  @@map("business_profiles")
+}
+
+// ## 2. Financial & Predictive Data Models ##
+
+// Stores the historical time-series data for an MSME
+model FinancialData {
+  id                    String    @id @default(uuid())
+  businessId            String    // Foreign key
+  dataMonth             DateTime  // The month this data represents (e.g., 2025-10-01)
+  revenue               Decimal?
+  expenses              Decimal?
+  avgPaymentDelayDays   Int?
+  customerChurnRate     Decimal?
+  monthlyHealthScore    Decimal?
+  createdAt             DateTime  @default(now())
+
+  // --- Relationships ---
+  business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, dataMonth]) // Ensures one data entry per business per month
+  @@map("financial_data")
+}
+
+// Powers the "Smart Receivables Dashboard"
+model Invoice {
+  id                String  @id @default(uuid())
+  businessId        String  // Foreign key
+  customerName      String
+  invoiceNumber     String?
+  amount            Decimal
+  issueDate         DateTime
+  dueDate           DateTime
+  status            InvoiceStatus @default(PENDING)
+  predictedRiskLevel PredictedRisk? // e.g., 'ON_TIME', 'AT_RISK'
+  createdAt         DateTime      @default(now())
+
+  // --- Relationships ---
+  business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+// ## 3. Feature-Specific Models ##
+
+// Powers the "Compliance Co-pilot" calendar
+model ComplianceTask {
+  id           String   @id @default(uuid())
+  businessId   String   // Foreign key
+  taskName     String
+  dueDate      DateTime
+  status       ComplianceStatus @default(UPCOMING)
+  isRecurring  Boolean          @default(false)
+  completedAt  DateTime?
+  detailsJson  Json?    // Flexible field for checklists, notes, etc.
+
+  // --- Relationships ---
+  business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("compliance_tasks")
+}
+
+// The "matchmaking" table for the Investor Connect feature
+model InvestorInterest {
+  id              String   @id @default(uuid())
+  investorUserId  String   // Foreign key for the Investor
+  businessId      String   // Foreign key for the MSME
+  status          InvestorInterestStatus @default(PENDING_MSME_APPROVAL)
+  investorNote    String?
+  createdAt       DateTime @default(now())
+
+  // --- Relationships ---
+  investor User            @relation("Investor", fields: [investorUserId], references: [id])
+  msme     BusinessProfile @relation("MSME", fields: [businessId], references: [id])
+
+  @@unique([investorUserId, businessId]) // An investor can only show interest once
+  @@map("investor_interest")
+}
+
+// Stores the chat history for the AI Advisor
+model ChatSession {
+  id          String    @id @default(uuid())
+  businessId  String    // Foreign key
+  title       String?
+  createdAt   DateTime  @default(now())
+
+  // --- Relationships ---
+  business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id          String    @id @default(uuid())
+  sessionId   String    // Foreign key
+  role        ChatRole  // 'USER' or 'AI'
+  content     String
+  createdAt   DateTime  @default(now())
+
+  // --- Relationships ---
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+
+// ## Enums (for defining strict categories) ##
+
+enum UserRole {
+  MSME_OWNER
+  INVESTOR
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PredictedRisk {
+  ON_TIME
+  AT_RISK
+}
+
+enum ComplianceStatus {
+  UPCOMING
+  COMPLETED
+  OVERDUE
+}
+
+enum InvestorInterestStatus {
+  PENDING_MSME_APPROVAL
+  CONNECTED
+  DECLINED
+}
+
+enum ChatRole {
+  USER
+  AI
+}
