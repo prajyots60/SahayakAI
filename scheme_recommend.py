@@ -10,6 +10,22 @@ def load_scheme_data():
     try:
         # Try to load from cleaned_schemes.csv
         df = pd.read_csv('cleaned_schemes.csv')
+
+        # Clean the Official_Link column to handle multiple URLs
+        def clean_url(url):
+            if pd.isna(url) or not url:
+                return ''
+            # Split by '|' and take the first URL, preferring HTTPS if available
+            urls = [u.strip() for u in str(url).split('|') if u.strip()]
+            https_urls = [u for u in urls if u.startswith('https://')]
+            if https_urls:
+                return https_urls[0]
+            elif urls:
+                return urls[0]
+            return ''
+
+        df['Official_Link'] = df['Official_Link'].apply(clean_url)
+
     except FileNotFoundError:
         # Create sample data if file doesn't exist
         data = {
