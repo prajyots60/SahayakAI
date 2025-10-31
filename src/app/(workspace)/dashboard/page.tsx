@@ -152,24 +152,6 @@ const receivables = [
   },
 ];
 
-const dataIntegrations = [
-  {
-    name: "Tally Prime",
-    status: "Synced 2 hours ago",
-    state: "ready" as const,
-  },
-  {
-    name: "GST Portal",
-    status: "Auth refresh due in 3 days",
-    state: "warning" as const,
-  },
-  {
-    name: "ICICI Bank Feeds",
-    status: "Pending reconciliation",
-    state: "info" as const,
-  },
-];
-
 const investorSignals = [
   {
     fund: "Pragati MSME Trust",
@@ -239,447 +221,475 @@ const sparklineSize = { width: 120, height: 48 };
 const performanceChartSize = { width: 320, height: 140 };
 
 export default function DashboardPage() {
-  const quickLinks: DashboardNavSection["items"] = [];
-  for (const section of dashboardNavSections) {
-    quickLinks.push(...section.items);
-  }
-
   return (
-    <div className="flex flex-col gap-8">
-      <header className="space-y-6 rounded-3xl border border-emerald-100/70 bg-white/90 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-              Today’s pulse
-            </span>
-            <div className="space-y-1">
-              <h1 className="text-3xl font-semibold text-slate-900">
-                Welcome back, Prajyot.
-              </h1>
-              <p className="max-w-xl text-sm text-slate-500">
-                Your business copilot analysed fresh books, bank feeds, and GST
-                signals overnight. Here’s what deserves your attention before
-                lunch.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              variant="outline"
-              className="rounded-xl border-emerald-200/70 bg-white px-5 py-5 text-sm font-semibold text-emerald-600 hover:bg-emerald-50"
-            >
-              <Clock className="mr-2 h-4 w-4 text-emerald-500" /> Updated 12
-              mins ago
-            </Button>
-            <Button className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 px-5 py-5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-              <DownloadCloud className="mr-2 h-4 w-4" /> Download summary
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2 xl:hidden">
-          {quickLinks.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="rounded-full border border-emerald-100 bg-emerald-50/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 shadow-sm"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      </header>
-
-      <section className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
-        {statCards.map((card) => {
-          const Icon = card.icon;
-          const tone =
-            card.changeDirection === "down"
-              ? "amber"
-              : card.changeDirection === "steady"
-              ? "slate"
-              : "emerald";
-
-          return (
-            <div
-              key={card.title}
-              className="relative overflow-hidden rounded-3xl border border-emerald-100/70 bg-white/90 p-6 shadow-lg shadow-emerald-500/10 backdrop-blur"
-            >
-              <div className="flex items-start justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <Sparkline
-                  data={card.sparkline}
-                  tone={
-                    tone === "amber"
-                      ? "amber"
-                      : tone === "slate"
-                      ? "slate"
-                      : "emerald"
-                  }
-                />
-              </div>
-              <div className="mt-6 space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-400">
-                  {card.title}
-                </p>
-                <div className="flex items-end gap-2">
-                  <span className="text-3xl font-semibold text-slate-900">
-                    {card.metric}
-                  </span>
-                  {card.suffix && (
-                    <span className="text-sm font-medium text-slate-400">
-                      {card.suffix}
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-slate-500">{card.subtext}</p>
-                <div className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-600">
-                  {card.changeDirection === "down" && (
-                    <ArrowDownRight className="h-3.5 w-3.5" />
-                  )}
-                  {card.changeDirection === "up" && (
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  )}
-                  {card.changeDirection === "steady" && (
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  )}
-                  {card.change}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </section>
-
-      <section id="trust-score" className="grid gap-6 xl:grid-cols-[1.7fr_1fr]">
-        <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-8 shadow-xl shadow-emerald-500/10 backdrop-blur">
-          <div className="flex flex-col gap-10 lg:flex-row">
-            <div className="flex flex-1 flex-col items-center justify-center gap-6">
-              <Gauge score={businessHealthScore} />
-              <span
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${businessHealthStatus.bg} ${businessHealthStatus.tone}`}
-              >
-                <CircleDot className="h-3 w-3" /> Status:{" "}
-                {businessHealthStatus.label}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-50 to-blue-50/30">
+      <div className="flex flex-col gap-8 px-6 py-8 lg:px-8">
+        {/* Premium Header */}
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <div className="h-1 w-1.5 rounded-full bg-emerald-500" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+                Business Dashboard
               </span>
             </div>
-            <div className="flex-1 space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">
-                  Your business health score climbed 4.3 points this month.
-                </h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  Cash buffers, receivable discipline, and consistent GST
-                  filings increased investor confidence. Keep the momentum with
-                  these next best actions curated by SahayakAI.
-                </p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-emerald-100/70 bg-emerald-50/40 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-500">
-                    Leading signals
-                  </p>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-[2px] h-4 w-4 text-emerald-500" />
-                      Inventory turnover improved to 36 days (target 38).
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-[2px] h-4 w-4 text-emerald-500" />
-                      EBITDA margin trending at 12.4% with stable commodity
-                      prices.
-                    </li>
-                  </ul>
-                </div>
-                <div className="rounded-2xl border border-emerald-100/70 bg-white p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-500">
-                    Focus this week
-                  </p>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                    <li className="flex items-start gap-2">
-                      <Factory className="mt-[2px] h-4 w-4 text-emerald-500" />
-                      Confirm vendor rebates for Diwali raw material orders.
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Sparkles className="mt-[2px] h-4 w-4 text-emerald-500" />
-                      Update investor-ready trust profile with September
-                      performance.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  asChild
-                  className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 px-5 py-5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30"
-                >
-                  <Link href="/advisor">Ask advisor for next steps</Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-xl border border-emerald-100 bg-white px-5 py-5 text-sm font-semibold text-emerald-600 hover:bg-emerald-50"
-                >
-                  View scoring model
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-emerald-100/70 bg-white/95 p-6 shadow-lg shadow-emerald-500/10 backdrop-blur">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-                  AI coach nudges
-                </p>
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Personalised next best actions
-                </h3>
-              </div>
-              <Link
-                href="/advisor"
-                className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600"
-              >
-                Open workspace
-              </Link>
-            </div>
-            <div className="mt-5 space-y-3">
-              {aiCoachPrompts.map((prompt) => (
-                <div
-                  key={prompt.title}
-                  className="group rounded-2xl border border-emerald-100/60 bg-emerald-50/30 p-4 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/60"
-                >
-                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.28em] text-emerald-400">
-                    <span>{prompt.tag}</span>
-                    <ArrowRight className="h-3.5 w-3.5 text-emerald-400 transition group-hover:translate-x-1" />
-                  </div>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">
-                    {prompt.title}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500">{prompt.prompt}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-emerald-100/70 bg-white/95 p-6 shadow-lg shadow-emerald-500/10 backdrop-blur">
-            <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-              <Clock className="h-4 w-4" /> Data sync status
-            </div>
-            <p className="mt-3 text-sm text-slate-500">
-              Keep integrations healthy so your projections never miss a beat.
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Business Performance Hub
+            </h1>
+            <p className="mt-2 text-base text-slate-600">
+              Real-time insights into your business health and financial metrics
             </p>
-            <ul className="mt-5 space-y-3 text-sm">
-              {dataIntegrations.map((integration) => (
-                <li
-                  key={integration.name}
-                  className="flex items-start justify-between rounded-2xl border border-emerald-100/60 bg-emerald-50/40 px-4 py-3"
-                >
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      {integration.name}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      {integration.status}
-                    </p>
-                  </div>
-                  <StatusPill state={integration.state} />
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 flex justify-end">
-              <Button
-                variant="outline"
-                className="rounded-xl border border-emerald-100 bg-white px-4 py-4 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600 hover:bg-emerald-50"
-              >
-                Manage connectors
-              </Button>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm border border-slate-200">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Live Data</span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 xl:grid-cols-3">
-        {performanceBlocks.map((block) => (
-          <PerformanceCard key={block.title} block={block} />
-        ))}
-      </section>
-
-      <section
-        id="receivables"
-        className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]"
-      >
-        <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-                Receivables heatmap
-              </p>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Clients needing follow-up this week
-              </h3>
-            </div>
-            <Link
-              href="/dashboard#trust-score"
-              className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600"
-            >
-              View playbook
-            </Link>
-          </div>
-          <div className="mt-5 overflow-hidden rounded-2xl border border-emerald-100/60">
-            <table className="w-full table-auto text-left text-sm">
-              <thead className="bg-emerald-50/70 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-500">
-                <tr>
-                  <th className="px-5 py-3">Client</th>
-                  <th className="px-5 py-3">Due date</th>
-                  <th className="px-5 py-3">Amount</th>
-                  <th className="px-5 py-3">Delay risk</th>
-                  <th className="px-5 py-3">Likelihood</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-emerald-100/60 bg-white/90">
-                {receivables.map((invoice) => (
-                  <tr key={invoice.client} className="text-sm text-slate-600">
-                    <td className="px-5 py-4">
-                      <p className="font-semibold text-slate-900">
-                        {invoice.client}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        Aging {invoice.aging}
-                      </p>
-                    </td>
-                    <td className="px-5 py-4">{invoice.due}</td>
-                    <td className="px-5 py-4 font-semibold text-slate-900">
-                      {invoice.amount}
-                    </td>
-                    <td className="px-5 py-4">
-                      <RiskBadge level={invoice.risk} />
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-2 w-24 overflow-hidden rounded-full bg-emerald-100">
-                          <div
-                            className={`h-full rounded-full ${
-                              invoice.risk === "high"
-                                ? "bg-rose-500"
-                                : invoice.risk === "medium"
-                                ? "bg-amber-500"
-                                : "bg-emerald-500"
-                            }`}
-                            style={{ width: `${invoice.probability}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-semibold text-slate-500">
-                          {invoice.probability}%
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 flex justify-end">
             <Button
-              asChild
-              variant="ghost"
-              className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600"
+              size="sm"
+              className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition-all"
             >
-              <Link href="/advisor">Automate follow-ups</Link>
+              <DownloadCloud className="mr-2 h-4 w-4" />
+              Export
             </Button>
           </div>
         </div>
 
-        <div id="compliance" className="space-y-6">
-          <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-                  Compliance cockpit
-                </p>
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Statutory deadlines & owners
-                </h3>
-              </div>
-              <CalendarClock className="h-5 w-5 text-emerald-500" />
-            </div>
-            <ul className="mt-5 space-y-4 text-sm">
-              {upcomingCompliance.map((item) => (
-                <li
-                  key={item.title}
-                  className="flex items-start justify-between rounded-2xl border border-emerald-100/60 bg-emerald-50/40 px-4 py-4"
-                >
-                  <div>
-                    <p className="font-semibold text-slate-900">{item.title}</p>
-                    <p className="text-xs text-slate-500">
-                      Owner: {item.owner}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-slate-500">Due {item.due}</p>
-                    <ComplianceBadge status={item.status} />
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 flex justify-end">
-              <Button
-                variant="outline"
-                className="rounded-xl border border-emerald-100 bg-white px-4 py-4 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600 hover:bg-emerald-50"
+        {/* Key Metrics Grid - Premium Cards */}
+        <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {statCards.map((card) => {
+            const Icon = card.icon;
+            const tone =
+              card.changeDirection === "down"
+                ? "amber"
+                : card.changeDirection === "steady"
+                ? "slate"
+                : "emerald";
+
+            return (
+              <div
+                key={card.title}
+                className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300"
               >
-                Export calendar
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-slate-50/30 opacity-0 transition-opacity group-hover:opacity-100" />
+
+                <div className="relative z-10 flex items-start justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50">
+                    <Icon className="h-6 w-6 text-emerald-600" />
+                  </div>
+                  <Sparkline
+                    data={card.sparkline}
+                    tone={
+                      tone === "amber"
+                        ? "amber"
+                        : tone === "slate"
+                        ? "slate"
+                        : "emerald"
+                    }
+                  />
+                </div>
+                <div className="relative z-10 mt-5 space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    {card.title}
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-slate-900">
+                      {card.metric}
+                    </span>
+                    {card.suffix && (
+                      <span className="text-sm font-medium text-slate-400">
+                        {card.suffix}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-600">{card.subtext}</p>
+                </div>
+                <div className="relative z-10 mt-4 flex items-center gap-1.5 text-xs font-semibold">
+                  {card.changeDirection === "down" && (
+                    <>
+                      <ArrowDownRight className="h-4 w-4 text-amber-600" />
+                      <span className="text-amber-600">{card.change}</span>
+                    </>
+                  )}
+                  {card.changeDirection === "up" && (
+                    <>
+                      <ArrowUpRight className="h-4 w-4 text-emerald-600" />
+                      <span className="text-emerald-600">{card.change}</span>
+                    </>
+                  )}
+                  {card.changeDirection === "steady" && (
+                    <>
+                      <ArrowRight className="h-4 w-4 text-slate-400" />
+                      <span className="text-slate-500">{card.change}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+
+        {/* Trust Score & Insights Section */}
+        <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+          {/* Main Trust Score Card */}
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <div className="bg-gradient-to-r from-slate-50 to-blue-50/30 px-7 py-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    Business Health Score
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Your trust score improved{" "}
+                    <span className="font-semibold text-emerald-600">
+                      +4.3 points
+                    </span>{" "}
+                    this month
+                  </p>
+                </div>
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${businessHealthStatus.bg} ${businessHealthStatus.tone}`}
+                >
+                  <CircleDot className="h-3 w-3" />
+                  {businessHealthStatus.label}
+                </span>
+              </div>
+            </div>
+
+            <div className="px-7 py-8">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+                {/* Gauge */}
+                <div className="flex justify-center lg:w-2/5">
+                  <Gauge score={businessHealthScore} />
+                </div>
+
+                {/* Key Insights */}
+                <div className="flex-1 space-y-5">
+                  <div className="rounded-xl border border-emerald-100/60 bg-gradient-to-br from-emerald-50/80 to-emerald-50/40 p-4">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-1 h-5 w-5 flex-shrink-0 text-emerald-600" />
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                          Performance Highlights
+                        </p>
+                        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+                          <li>• Inventory turnover improved to 36 days</li>
+                          <li>• EBITDA margin trending at 12.4%</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-slate-200/60 bg-gradient-to-br from-slate-50/80 to-slate-50/40 p-4">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-slate-600" />
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                          Action Items This Week
+                        </p>
+                        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+                          <li>• Confirm vendor rebates for raw materials</li>
+                          <li>• Update investor profile with Sept data</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      asChild
+                      size="sm"
+                      className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition-all"
+                    >
+                      <Link href="/advisor">Ask AI Advisor</Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-lg text-sm border-slate-300"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Side Widgets */}
+          <div className="flex flex-col gap-6">
+            {/* AI Suggestions */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+              <div className="border-b border-slate-100 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-slate-900">
+                    AI Suggestions
+                  </h3>
+                  <Link
+                    href="/advisor"
+                    className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                  >
+                    View All →
+                  </Link>
+                </div>
+              </div>
+              <div className="space-y-2 p-4">
+                {aiCoachPrompts.slice(0, 2).map((prompt) => (
+                  <button
+                    key={prompt.title}
+                    className="group w-full rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 text-left transition-all hover:border-emerald-200/80 hover:bg-emerald-50/40"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                          {prompt.tag}
+                        </span>
+                        <p className="mt-1.5 text-sm font-semibold text-slate-900">
+                          {prompt.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-600 line-clamp-2">
+                          {prompt.prompt}
+                        </p>
+                      </div>
+                      <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-emerald-600" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Data Sync Status */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+              <div className="border-b border-slate-100 px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-slate-500" />
+                  <h3 className="text-base font-bold text-slate-900">
+                    Integrations
+                  </h3>
+                </div>
+              </div>
+              <div className="space-y-2 p-4">
+                {[
+                  {
+                    name: "Tally Prime",
+                    status: "Synced now",
+                    state: "ready" as const,
+                  },
+                  {
+                    name: "GST Portal",
+                    status: "Pending",
+                    state: "warning" as const,
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between rounded-lg bg-slate-50/60 px-3.5 py-3"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {item.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        {item.status}
+                      </p>
+                    </div>
+                    <StatusPill state={item.state} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Performance Charts Section */}
+        <section>
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-slate-900">
+              Financial Performance
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Monthly revenue, expenses, and profitability trends
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {performanceBlocks.map((block) => (
+              <PerformanceCard key={block.title} block={block} />
+            ))}
+          </div>
+        </section>
+
+        {/* Receivables & Compliance Section */}
+        <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+          {/* Receivables Table */}
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <div className="border-b border-slate-100 px-7 py-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Receivables Heatmap
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Clients requiring follow-up
+                  </p>
+                </div>
+                <Link
+                  href="/receivables"
+                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                >
+                  View All →
+                </Link>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="border-b border-slate-100 bg-slate-50/50">
+                  <tr className="text-xs font-bold uppercase text-slate-600">
+                    <th className="px-6 py-4 text-left">Client</th>
+                    <th className="px-6 py-4 text-left">Due Date</th>
+                    <th className="px-6 py-4 text-left">Amount</th>
+                    <th className="px-6 py-4 text-center">Risk</th>
+                    <th className="px-6 py-4 text-right">Likelihood</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {receivables.map((invoice) => (
+                    <tr
+                      key={invoice.client}
+                      className="transition-colors hover:bg-slate-50/40"
+                    >
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {invoice.client}
+                          </p>
+                          <p className="mt-0.5 text-xs text-slate-500">
+                            {invoice.aging} aging
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-700">
+                        {invoice.due}
+                      </td>
+                      <td className="px-6 py-4 font-semibold text-slate-900">
+                        {invoice.amount}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <RiskBadge level={invoice.risk} />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2.5">
+                          <div className="relative h-1.5 w-20 overflow-hidden rounded-full bg-slate-200">
+                            <div
+                              className={`h-full rounded-full ${
+                                invoice.risk === "high"
+                                  ? "bg-rose-500"
+                                  : invoice.risk === "medium"
+                                  ? "bg-amber-500"
+                                  : "bg-emerald-500"
+                              }`}
+                              style={{ width: `${invoice.probability}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-semibold text-slate-600 w-8">
+                            {invoice.probability}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="border-t border-slate-100 px-6 py-4">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+              >
+                <Link href="/advisor">Automate Follow-ups →</Link>
               </Button>
             </div>
           </div>
 
-          <div
-            id="investor-connect"
-            className="rounded-3xl border border-emerald-100/80 bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 p-6 text-white shadow-xl shadow-emerald-600/30"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-100">
-                  Investor connect
-                </p>
-                <h3 className="mt-2 text-lg font-semibold">
-                  Your trust score is investor ready
-                </h3>
-                <p className="mt-2 text-sm text-emerald-50/90">
-                  Showcase verified cash flow stability and compliance
-                  discipline to unlock faster credit decisions.
-                </p>
+          {/* Compliance & Investor Cards */}
+          <div className="flex flex-col gap-6">
+            {/* Compliance Card */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+              <div className="border-b border-slate-100 px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <CalendarClock className="h-4 w-4 text-slate-600" />
+                  <h3 className="text-base font-bold text-slate-900">
+                    Compliance
+                  </h3>
+                </div>
               </div>
-              <Users className="h-8 w-8 text-emerald-100" />
+              <div className="space-y-2 p-4">
+                {upcomingCompliance.map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-lg border border-slate-200/60 bg-slate-50/40 p-3.5"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {item.owner}
+                        </p>
+                      </div>
+                      <ComplianceBadge status={item.status} />
+                    </div>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Due {item.due}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <ul className="mt-5 space-y-3 text-sm text-emerald-50/90">
-              {investorSignals.map((signal) => (
-                <li
-                  key={signal.fund}
-                  className="rounded-2xl bg-white/10 px-4 py-3"
+
+            {/* Investor Connect Card */}
+            <div className="overflow-hidden rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-600 shadow-md">
+              <div className="px-6 py-5 text-white">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <h3 className="text-base font-bold">Investor Connect</h3>
+                    <p className="mt-1 text-sm text-emerald-50">
+                      Your score is investor-ready
+                    </p>
+                  </div>
+                  <Users className="h-5 w-5 text-emerald-100 flex-shrink-0" />
+                </div>
+                <div className="space-y-2.5">
+                  {investorSignals.map((signal) => (
+                    <div
+                      key={signal.fund}
+                      className="rounded-lg bg-white/10 px-3.5 py-3 backdrop-blur-sm"
+                    >
+                      <p className="text-sm font-semibold">{signal.fund}</p>
+                      <p className="mt-0.5 text-xs text-emerald-50">
+                        {signal.focus}
+                      </p>
+                      <p className="mt-1 text-xs text-emerald-100/90">
+                        {signal.interest}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  asChild
+                  size="sm"
+                  className="mt-4 w-full rounded-lg bg-white/20 text-sm font-semibold text-white hover:bg-white/30 transition-colors"
                 >
-                  <p className="font-semibold text-white">{signal.fund}</p>
-                  <p>{signal.focus}</p>
-                  <p className="text-xs text-emerald-100/90">
-                    {signal.interest}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-5 flex justify-end">
-              <Button
-                asChild
-                size="sm"
-                className="rounded-xl bg-white/15 text-[11px] font-semibold uppercase tracking-[0.24em] text-white hover:bg-white/25"
-              >
-                <Link href="/dashboard#trust-score">Share trust profile</Link>
-              </Button>
+                  <Link href="/investor-connect">Share Profile →</Link>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
@@ -706,7 +716,7 @@ function linePath(
 
 function Gauge({ score }: { score: number }) {
   const clampedScore = Math.min(Math.max(score, 0), 100);
-  const radius = 90;
+  const radius = 65;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (clampedScore / 100) * circumference;
 
@@ -718,36 +728,33 @@ function Gauge({ score }: { score: number }) {
       : "stroke-rose-500";
 
   return (
-    <div className="relative flex h-60 w-60 items-center justify-center">
-      <svg className="absolute h-full w-full" viewBox="0 0 220 220">
+    <div className="relative flex h-56 w-56 items-center justify-center">
+      <svg className="absolute h-full w-full -rotate-90" viewBox="0 0 160 160">
         <circle
-          className="stroke-slate-100"
-          strokeWidth={20}
+          className="stroke-slate-200"
+          strokeWidth={14}
           fill="transparent"
           r={radius}
-          cx="110"
-          cy="110"
+          cx="80"
+          cy="80"
         />
         <circle
-          className={`${gaugeTone} transition-all duration-700 ease-out`}
-          strokeWidth={20}
+          className={`${gaugeTone} transition-all duration-1000 ease-out`}
+          strokeWidth={14}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
           fill="transparent"
           r={radius}
-          cx="110"
-          cy="110"
+          cx="80"
+          cy="80"
         />
       </svg>
-      <div className="z-[1] flex flex-col items-center justify-center">
-        <span className="text-xs uppercase tracking-[0.3em] text-slate-400">
-          Score
-        </span>
-        <span className="text-5xl font-semibold text-slate-900">
+      <div className="z-[1] flex flex-col items-center">
+        <span className="text-5xl font-bold text-slate-900">
           {clampedScore}
         </span>
-        <span className="text-xs font-medium uppercase tracking-[0.25em] text-slate-400">
+        <span className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-500">
           / 100
         </span>
       </div>
@@ -775,13 +782,13 @@ function Sparkline({
   return (
     <svg
       viewBox={`0 0 ${sparklineSize.width} ${sparklineSize.height}`}
-      className="h-12 w-24"
+      className="h-10 w-20"
     >
       <path
         d={path}
         fill="none"
-        strokeWidth={3}
-        className={`${strokeClass} drop-shadow-[0_2px_6px_rgba(16,185,129,0.3)]`}
+        strokeWidth={2.5}
+        className={strokeClass}
         strokeLinecap="round"
       />
     </svg>
@@ -790,31 +797,29 @@ function Sparkline({
 
 function PerformanceCard({ block }: { block: PerformanceBlock }) {
   return (
-    <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-6 shadow-xl shadow-emerald-500/10 backdrop-blur">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-            {block.subtitle}
-          </p>
-          <h3 className="text-lg font-semibold text-slate-900">
-            {block.title}
-          </h3>
-        </div>
+    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <div className="border-b border-slate-100 px-6 py-5">
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          {block.subtitle}
+        </p>
+        <h3 className="mt-2 text-base font-bold text-slate-900">
+          {block.title}
+        </h3>
       </div>
-      <div className="mt-5">
+      <div className="px-6 py-5">
         <svg
           viewBox={`0 0 ${performanceChartSize.width} ${performanceChartSize.height}`}
-          className="h-36 w-full"
+          className="h-32 w-full"
         >
           <rect
             x="0"
             y="0"
             width={performanceChartSize.width}
             height={performanceChartSize.height}
-            rx="16"
-            className="fill-emerald-50/40"
+            rx="12"
+            className="fill-slate-50/60"
           />
-          <g className="stroke-emerald-100">
+          <g className="stroke-slate-200/80">
             {[0, 1, 2, 3].map((grid) => (
               <line
                 key={grid}
@@ -834,19 +839,19 @@ function PerformanceCard({ block }: { block: PerformanceBlock }) {
                 key={serie.name}
                 d={path}
                 fill="none"
-                strokeWidth={3.5}
-                className={`${serie.className} drop-shadow-[0_4px_12px_rgba(16,185,129,0.25)]`}
+                strokeWidth={3}
+                className={serie.className}
                 strokeLinecap="round"
               />
             );
           })}
         </svg>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+        <div className="mt-4 flex items-center justify-between text-[10px] font-bold uppercase text-slate-600">
           {block.labels.map((label) => (
             <span key={label}>{label}</span>
           ))}
         </div>
-        <div className="mt-4 flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+        <div className="mt-3 flex flex-wrap gap-4 text-xs font-semibold text-slate-600">
           {block.series.map((serie) => (
             <span key={serie.name} className="flex items-center gap-2">
               <span
@@ -868,13 +873,15 @@ function PerformanceCard({ block }: { block: PerformanceBlock }) {
 function RiskBadge({ level }: { level: "high" | "medium" | "low" }) {
   const styles =
     level === "high"
-      ? "bg-rose-100 text-rose-600"
+      ? "bg-rose-50/80 text-rose-700 border-rose-200/60"
       : level === "medium"
-      ? "bg-amber-100 text-amber-600"
-      : "bg-emerald-100 text-emerald-600";
+      ? "bg-amber-50/80 text-amber-700 border-amber-200/60"
+      : "bg-emerald-50/80 text-emerald-700 border-emerald-200/60";
 
   return (
-    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${styles}`}>
+    <span
+      className={`inline-flex rounded-lg border px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${styles}`}
+    >
       {level === "high" && "High"}
       {level === "medium" && "Medium"}
       {level === "low" && "Low"}
@@ -888,16 +895,25 @@ function ComplianceBadge({
   status: "urgent" | "due-soon" | "planned";
 }) {
   const map = {
-    urgent: { label: "Due today", classes: "bg-rose-100 text-rose-600" },
-    "due-soon": { label: "Due soon", classes: "bg-amber-100 text-amber-600" },
-    planned: { label: "Planned", classes: "bg-emerald-100 text-emerald-600" },
+    urgent: {
+      label: "Urgent",
+      classes: "bg-rose-50/80 text-rose-700 border-rose-200/60",
+    },
+    "due-soon": {
+      label: "Due Soon",
+      classes: "bg-amber-50/80 text-amber-700 border-amber-200/60",
+    },
+    planned: {
+      label: "Planned",
+      classes: "bg-slate-100/80 text-slate-700 border-slate-200/60",
+    },
   } as const;
 
   const pill = map[status];
 
   return (
     <span
-      className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${pill.classes}`}
+      className={`inline-flex rounded-lg border px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${pill.classes}`}
     >
       {pill.label}
     </span>
@@ -907,20 +923,20 @@ function ComplianceBadge({
 function StatusPill({ state }: { state: "ready" | "warning" | "info" }) {
   if (state === "warning") {
     return (
-      <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-600">
-        Action needed
+      <span className="inline-flex rounded-lg border border-amber-200/60 bg-amber-50/80 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-amber-700">
+        Action
       </span>
     );
   }
   if (state === "info") {
     return (
-      <span className="rounded-full bg-emerald-100/70 px-3 py-1 text-xs font-semibold text-emerald-600">
+      <span className="inline-flex rounded-lg border border-slate-200/60 bg-slate-100/80 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-700">
         Pending
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600">
+    <span className="inline-flex rounded-lg border border-emerald-200/60 bg-emerald-50/80 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700">
       Synced
     </span>
   );
