@@ -57,6 +57,12 @@ export const dashboardNavSections: DashboardNavSection[] = [
         description: "24/7 MSME coach",
       },
       {
+        label: "Govt Schemes",
+        href: "/government-schemes",
+        icon: ShieldCheck,
+        description: "Find eligible schemes",
+      },
+      {
         label: "Receivables",
         href: "/receivables",
         icon: LineChart,
