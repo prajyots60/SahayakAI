@@ -14,11 +14,11 @@ const industries = [
 ];
 
 const subSectors: Record<string, string[]> = {
-  "Manufacturing": ["Leather", "Wood Products", "Rubber and Plastic", "Others"],
-  "Services": ["Consultancy", "IT Services", "Transport/Logistics", "Others"],
-  "Retail": ["Fashion & Apparel", "Grocery", "Electronics", "Others"],
-  "Food Processing": ["Bakery", "Dairy Products", "Packaged Food","Others"],
-  "Handicrafts": ["Pottery", "Textiles", "Wood Crafts","Others"],
+  Manufacturing: ["Leather", "Wood Products", "Rubber and Plastic", "Others"],
+  Services: ["Consultancy", "IT Services", "Transport/Logistics", "Others"],
+  Retail: ["Fashion & Apparel", "Grocery", "Electronics", "Others"],
+  "Food Processing": ["Bakery", "Dairy Products", "Packaged Food", "Others"],
+  Handicrafts: ["Pottery", "Textiles", "Wood Crafts", "Others"],
 };
 
 function InputField({
@@ -54,16 +54,24 @@ export default function DataInputPage() {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
+      const response = await fetch("/api/predict", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          revenue: (document.getElementById('revenue') as HTMLInputElement)?.value || '0',
-          expenses: (document.getElementById('expenses') as HTMLInputElement)?.value || '0',
-          cash_on_hand: (document.getElementById('cash_on_hand') as HTMLInputElement)?.value || '0',
-          num_employees: (document.getElementById('num_employees') as HTMLInputElement)?.value || '0',
+          revenue:
+            (document.getElementById("revenue") as HTMLInputElement)?.value ||
+            "0",
+          expenses:
+            (document.getElementById("expenses") as HTMLInputElement)?.value ||
+            "0",
+          cash_on_hand:
+            (document.getElementById("cash_on_hand") as HTMLInputElement)
+              ?.value || "0",
+          num_employees:
+            (document.getElementById("num_employees") as HTMLInputElement)
+              ?.value || "0",
           industry,
           sub_sector: subSector,
         }),
@@ -74,8 +82,8 @@ export default function DataInputPage() {
       const data = await response.json();
       setPrediction(data);
     } catch (error) {
-      console.error('Prediction error:', error);
-      setPrediction({ error: 'Failed to get prediction. Please try again.' });
+      console.error("Prediction error:", error);
+      setPrediction({ error: "Failed to get prediction. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -196,7 +204,7 @@ export default function DataInputPage() {
               disabled={loading}
               className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 px-6 py-5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30"
             >
-              {loading ? 'Predicting...' : 'Predict Risk'}
+              {loading ? "Predicting..." : "Predict Risk"}
             </Button>
             <Button className="rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 px-6 py-5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30">
               Save snapshot
@@ -213,7 +221,9 @@ export default function DataInputPage() {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-3xl border border-emerald-100 p-8 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-slate-900">Risk Assessment Results</h3>
+                  <h3 className="text-2xl font-bold text-slate-900">
+                    Risk Assessment Results
+                  </h3>
                   <button
                     onClick={() => setPrediction(null)}
                     className="text-slate-400 hover:text-slate-600 text-2xl"
@@ -229,64 +239,102 @@ export default function DataInputPage() {
                 ) : (
                   <div className="space-y-6">
                     <div className="text-center">
-                      <div className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-lg font-semibold ${
-                        prediction.predicted_class === 1
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {prediction.predicted_class === 1 ? '⚠️ High Risk' : '✅ Low Risk'}
+                      <div
+                        className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-lg font-semibold ${
+                          prediction.predicted_class === 1
+                            ? "bg-red-100 text-red-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {prediction.predicted_class === 1
+                          ? "⚠️ High Risk"
+                          : "✅ Low Risk"}
                       </div>
                     </div>
 
                     <div className="grid gap-4">
                       <div className="bg-slate-50 rounded-xl p-4">
                         <div className="flex justify-between items-center">
-                          <span className="font-medium text-slate-700">Risk Probability:</span>
-                          <span className="text-2xl font-bold text-slate-900">{prediction.probability}%</span>
+                          <span className="font-medium text-slate-700">
+                            Risk Probability:
+                          </span>
+                          <span className="text-2xl font-bold text-slate-900">
+                            {prediction.probability}%
+                          </span>
                         </div>
                       </div>
 
                       <div className="bg-slate-50 rounded-xl p-4">
                         <div className="flex justify-between items-center">
-                          <span className="font-medium text-slate-700">Business Health Score:</span>
-                          <span className="text-2xl font-bold text-slate-900">{prediction.business_health_score}</span>
+                          <span className="font-medium text-slate-700">
+                            Business Health Score:
+                          </span>
+                          <span className="text-2xl font-bold text-slate-900">
+                            {prediction.business_health_score}
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-blue-50 rounded-xl p-4">
-                      <h4 className="font-semibold text-slate-900 mb-2">Analysis Summary</h4>
-                      <p className="text-slate-700">{prediction.reasoning_summary}</p>
+                      <h4 className="font-semibold text-slate-900 mb-2">
+                        Analysis Summary
+                      </h4>
+                      <p className="text-slate-700">
+                        {prediction.reasoning_summary}
+                      </p>
                     </div>
 
                     <div className="bg-slate-50 rounded-xl p-4">
-                      <h4 className="font-semibold text-slate-900 mb-3">Key Factors</h4>
+                      <h4 className="font-semibold text-slate-900 mb-3">
+                        Key Factors
+                      </h4>
                       <div className="space-y-2">
-                        {Object.entries(prediction.feature_contributions).map(([feature, value]) => {
-                          const numValue = typeof value === 'number' ? value : parseFloat(value as string) || 0;
-                          const displayName = {
-                            'Profit_Margin': 'Profit Margin',
-                            'Cash_to_Expense': 'Cash to Expense Ratio',
-                            'Revenue_per_Employee': 'Revenue per Employee',
-                            'Industry': 'Industry Type',
-                            'Sub_Sector': 'Sub Sector'
-                          }[feature] || feature.replace(/_/g, ' ');
+                        {Object.entries(prediction.feature_contributions).map(
+                          ([feature, value]) => {
+                            const numValue =
+                              typeof value === "number"
+                                ? value
+                                : parseFloat(value as string) || 0;
+                            const displayName =
+                              {
+                                Profit_Margin: "Profit Margin",
+                                Cash_to_Expense: "Cash to Expense Ratio",
+                                Revenue_per_Employee: "Revenue per Employee",
+                                Industry: "Industry Type",
+                                Sub_Sector: "Sub Sector",
+                              }[feature] || feature.replace(/_/g, " ");
 
-                          const impact = numValue > 0 ? 'Increases Risk' : 'Decreases Risk';
-                          const impactColor = numValue > 0 ? 'text-red-600' : 'text-green-600';
+                            const impact =
+                              numValue > 0
+                                ? "Increases Risk"
+                                : "Decreases Risk";
+                            const impactColor =
+                              numValue > 0 ? "text-red-600" : "text-green-600";
 
-                          return (
-                            <div key={feature} className="flex justify-between items-center">
-                              <div className="flex flex-col">
-                                <span className="text-sm text-slate-600">{displayName}</span>
-                                <span className={`text-xs ${impactColor}`}>{impact}</span>
+                            return (
+                              <div
+                                key={feature}
+                                className="flex justify-between items-center"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="text-sm text-slate-600">
+                                    {displayName}
+                                  </span>
+                                  <span className={`text-xs ${impactColor}`}>
+                                    {impact}
+                                  </span>
+                                </div>
+                                <span
+                                  className={`text-sm font-medium ${impactColor}`}
+                                >
+                                  {numValue > 0 ? "+" : ""}
+                                  {numValue.toFixed(3)}
+                                </span>
                               </div>
-                              <span className={`text-sm font-medium ${impactColor}`}>
-                                {numValue > 0 ? '+' : ''}{numValue.toFixed(3)}
-                              </span>
-                            </div>
-                          );
-                        })}
+                            );
+                          }
+                        )}
                       </div>
                     </div>
 

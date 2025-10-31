@@ -5,15 +5,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  ArrowLeft,
-  History,
-  MessageCircle,
-  Quote,
-  Send,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { ArrowLeft, History, MessageCircle, Quote, Send } from "lucide-react";
 
 interface ChatMessage {
   id: string;
@@ -22,11 +14,28 @@ interface ChatMessage {
   sources?: string[];
 }
 
+// const historyItems = [
+//   {
+//     id: "cash-crisis-oct-13",
+//     title: "Plan for Cash Crisis - Oct 13",
+//     excerpt: "Liquidity playbook with vendor negotiation tips",
+//   },
+//   {
+//     id: "marketing-ideas-oct-11",
+//     title: "Marketing Ideas - Oct 11",
+//     excerpt: "Festival campaign roadmap for Tier-2 cities",
+//   },
+//   {
+//     id: "inventory-ops-oct-09",
+//     title: "Inventory Ops Review - Oct 09",
+//     excerpt: "Optimised reorder triggers for raw materials",
+//   },
+// ];
+
 export default function AdvisorPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-  const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -38,13 +47,13 @@ export default function AdvisorPage() {
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px";
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
     }
   }, [input]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -185,87 +194,73 @@ export default function AdvisorPage() {
 
   const showWelcome = messages.length === 0 && !isThinking;
 
-  // Prevent body scroll when component mounts
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
-
   return (
-    <div
-      className="flex flex-col overflow-hidden bg-slate-50 pt-4"
-      style={{ height: "calc(100vh - 2rem)" }}
-    >
-      {/* Header Dropdown - Fixed */}
-      <div className="flex-shrink-0 border-b border-emerald-100/80 bg-white/95 shadow-sm mt-2">
-        <button
-          onClick={() => setIsHeaderExpanded(!isHeaderExpanded)}
-          className="w-full px-6 py-4 text-left transition-colors hover:bg-emerald-50/50"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
-                  AI advisor
-                </p>
-                <h1 className="text-lg font-semibold text-slate-900 sm:text-xl">
-                  Ask anything, Prajyot.
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center text-xs font-medium text-emerald-700 hover:text-emerald-800 sm:text-sm"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ArrowLeft className="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />{" "}
-                Back
-              </Link>
-              {isHeaderExpanded ? (
-                <ChevronUp className="h-4 w-4 text-slate-400" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              )}
-            </div>
-          </div>
-        </button>
-
-        {/* Expanded Content */}
-        {isHeaderExpanded && (
-          <div className="border-t border-emerald-100/50 px-6 pb-4 pt-3">
-            <p className="text-sm text-slate-500">
-              Your always-on business partner for cash flow, growth, and risk
-              mitigation. Get tailored advice for your MSME challenges.
+    <div className="flex flex-col gap-6 xl:flex-row">
+      {/* <aside className="hidden w-full max-w-xs border-r border-emerald-100/70 bg-white/70 px-6 py-10 text-slate-700 lg:flex lg:flex-col">
+        <div className="mb-6 flex items-center gap-3">
+          <History className="h-5 w-5 text-emerald-500" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
+              Conversations
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-                Cash Flow Management
-              </span>
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-                Growth Strategies
-              </span>
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-                Compliance & Risk
-              </span>
-            </div>
+            <p className="text-sm font-semibold text-slate-900">Chat history</p>
           </div>
-        )}
-      </div>
+        </div>
+        <nav className="space-y-3">
+          {historyItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="w-full rounded-2xl border border-emerald-100 bg-white/80 px-4 py-4 text-left text-sm text-slate-700 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/80 hover:shadow-md"
+            >
+              <p className="font-semibold text-slate-900">{item.title}</p>
+              <p className="text-xs text-slate-500">{item.excerpt}</p>
+            </button>
+          ))}
+        </nav>
+        <div className="mt-auto flex justify-between pt-6 text-xs text-emerald-600">
+          <Link href="/dashboard" className="hover:underline">
+            ← Back to dashboard
+          </Link>
+          <Link href="/" className="hover:underline">
+            Home
+          </Link>
+        </div>
+      </aside> */}
 
-      {/* Chat Area - Scrollable */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Messages Container - Only this scrolls */}
-        <div
-          className="flex-1 overflow-y-auto overscroll-contain px-4 py-6 sm:px-6"
-          style={{ scrollBehavior: "smooth" }}
-        >
-          <div className="mx-auto max-w-4xl">
+      <div className="flex flex-1 flex-col gap-6">
+        <div className="rounded-3xl border border-emerald-100/80 bg-white/95 p-6 shadow-xl shadow-emerald-500/10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-500">
+                AI advisor
+              </p>
+              <h1 className="text-3xl font-semibold text-slate-900">
+                Ask anything, Prajyot.
+              </h1>
+              <p className="text-sm text-slate-500">
+                Your always-on business partner for cash flow, growth, and risk
+                mitigation. Start with one of the focus areas highlighted on
+                your dashboard.
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              asChild
+              className="self-start text-sm font-medium text-emerald-700 hover:text-emerald-800"
+            >
+              <Link href="/dashboard" className="inline-flex items-center">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to dashboard
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        <section className="flex flex-1 flex-col overflow-hidden rounded-3xl border border-emerald-100 bg-white/95 shadow-xl shadow-emerald-500/10 sm:min-h-[70vh]">
+          <div className="flex-1 overflow-y-auto border-b border-emerald-100/60 bg-white/80 px-5 py-6 sm:px-6">
             {showWelcome ? (
               <div className="flex h-full flex-col items-center justify-center text-center text-slate-500">
-                <MessageCircle className="mb-4 h-12 w-12 text-emerald-400" />
+                <MessageCircle className="mb-4 h-10 w-10 text-emerald-400" />
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-500">
                   I'm SahayakAI
                 </p>
@@ -273,18 +268,18 @@ export default function AdvisorPage() {
                   Ask me anything about improving your business.
                 </h2>
                 <p className="mt-2 max-w-xl text-sm text-slate-500">
-                  You can start by exploring growth strategies, cash flow
-                  management, or compliance requirements. I format every
-                  recommendation so you can act immediately.
+                  You can start by tapping a risk from your dashboard or
+                  exploring new growth strategies. I format every recommendation
+                  so you can act immediately.
                 </p>
               </div>
             ) : (
-              <div className="space-y-6 pb-4">
+              <div className="space-y-6 pb-10">
                 {messages.map((message) => (
                   <ChatBubble key={message.id} message={message} />
                 ))}
                 {isThinking && (
-                  <div className="flex items-center gap-2 text-sm text-emerald-600">
+                  <div className="flex items-center gap-2 text-xs text-emerald-500">
                     <Quote className="h-4 w-4 animate-pulse" />
                     SahayakAI is thinking...
                   </div>
@@ -293,46 +288,38 @@ export default function AdvisorPage() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Fixed Composer - Always at bottom */}
-        <div className="flex-shrink-0 border-t border-emerald-100/60 bg-white/95 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pt-8">
-          <div className="mx-auto max-w-4xl">
+          <div className="bg-white/95 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 sm:pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pt-5">
             <form
-              className="flex w-full items-end gap-3 rounded-2xl border border-emerald-200/50 bg-white p-2 shadow-lg shadow-emerald-500/10 backdrop-blur transition-all duration-200 focus-within:border-emerald-300 focus-within:shadow-emerald-500/20"
+              className="flex w-full flex-col gap-3 rounded-2xl border border-emerald-100/80 bg-white/95 p-3 shadow-lg shadow-emerald-500/10 backdrop-blur"
               onSubmit={(event) => {
                 event.preventDefault();
                 void handleSend();
               }}
             >
-              <div className="flex-1 relative">
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask about reducing payment delays or improving margins..."
-                  className="w-full max-h-[120px] min-h-[44px] resize-none rounded-xl border-0 bg-transparent px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+              <textarea
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                rows={3}
+                placeholder="Ask about reducing payment delays or improving margins..."
+                className="w-full min-h-[92px] resize-none rounded-xl border border-emerald-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-xs text-slate-400">
+                  Tip: Reference a focus area like “Explain causes for low cash on
+                  hand" to get a tailored plan.
+                </div>
+                <Button
+                  type="submit"
                   disabled={isThinking}
-                />
-                {input.trim() && (
-                  <div className="absolute bottom-1 right-2 text-xs text-slate-400">
-                    Press Enter to send, Shift+Enter for new line
-                  </div>
-                )}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-emerald-500/30 disabled:opacity-60"
+                >
+                  {isThinking ? "Thinking..." : "Send"}
+                  <Send className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                type="submit"
-                disabled={isThinking || !input.trim()}
-                size="sm"
-                className="h-10 w-10 flex-shrink-0 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 p-0 shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
-              >
-                <Send className="h-4 w-4" />
-                <span className="sr-only">Send message</span>
-              </Button>
             </form>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
@@ -351,7 +338,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
         className={cn(
           "max-w-2xl rounded-2xl border px-5 py-4 shadow-sm",
           isUser
-            ? "border-emerald-200 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white"
+            ? "border-emerald-200 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-sm text-white"
             : "border-emerald-100 bg-white text-slate-700"
         )}
       >

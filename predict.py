@@ -75,10 +75,18 @@ def main():
         'Sub_Sector': [0, 1, 2]
     }
     background = pd.DataFrame(background_data)
-    explainer = shap.TreeExplainer(xgb_model, data=background)
-    shap_values = explainer.shap_values(X_input)
-
-    shap_vals_row = pd.Series(shap_values[0], index=X_input.columns)
+    
+    # Work around XGBoost/SHAP compatibility issue by using the model's predict method
+    try:
+        # Try using the tree explainer with model output type
+        explainer = shap.Explainer(xgb_model.predict, background)
+        shap_values = explainer(X_input)
+        shap_vals_row = pd.Series(shap_values.values[0], index=X_input.columns)
+    except Exception as e:
+        # Fallback: Use simple feature importance from the model
+        print(f"Warning: SHAP failed, using feature importance instead: {e}", file=sys.stderr)
+        feature_importance = xgb_model.feature_importances_
+        shap_vals_row = pd.Series(feature_importance, index=X_input.columns)
 
     # Feature contributions
     feature_contributions = {}
