@@ -21,6 +21,7 @@ model User {
   role          UserRole  @default(MSME_OWNER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  onboardingCompleted Boolean   @default(false)
 
   // 1-to-1 relationship: One user has one business profile
   businessProfile BusinessProfile?

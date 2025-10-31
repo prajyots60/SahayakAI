@@ -125,8 +125,8 @@ export default function SignupPage() {
         return;
       }
 
-      // Account created; direct them to login to continue to onboarding.
-      router.push("/login?created=1");
+      // Account created; direct them to onboarding to complete setup.
+      router.push(`/onboarding?userId=${data.user.id}&role=${data.user.role}`);
     } catch (err) {
       console.error("signup submit error", err);
       form.setError("root", {
